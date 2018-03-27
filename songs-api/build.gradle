@@ -54,8 +54,3 @@ test {
 		displayGranularity 2
 	}
 }
-
-dockerCompose {
-	useComposeFiles = ['docker-compose.test.yml']
-}
-dockerCompose.isRequiredBy(test)
