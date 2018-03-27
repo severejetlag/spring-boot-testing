@@ -1,7 +1,7 @@
 package com.example.springbootmicroservicewrapperwithtests.features;
 
-import com.example.springbootmicroservicewrapperwithtests.models.User;
-import com.example.springbootmicroservicewrapperwithtests.repositories.UserRepository;
+import com.example.springbootmicroservicewrapperwithtests.models.Song;
+import com.example.springbootmicroservicewrapperwithtests.repositories.SongRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,88 +23,85 @@ import static org.hamcrest.Matchers.is;
 public class SongsApiFeatureTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private SongRepository SongRepository;
 
-    User secondUser;
+    Song secondSong;
 
     @Before
     public void setUp() {
-        userRepository.deleteAll();
+        SongRepository.deleteAll();
 
-        User firstUser = new User(
-                "someone",
+        Song firstSong = new Song(
                 "Ima",
-                "Person"
+                "Song"
         );
 
-        secondUser = new User(
-                "someone_else",
-                "Someone",
-                "Else"
+        secondSong = new Song(
+                "Imma'nother",
+                "Song"
         );
 
-        Stream.of(firstUser, secondUser)
-                .forEach(user -> {
-                    userRepository.save(user);
+        Stream.of(firstSong, secondSong)
+                .forEach(Song -> {
+                    SongRepository.save(Song);
                 });
     }
 
     @After
     public void tearDown() {
-        userRepository.deleteAll();
+        SongRepository.deleteAll();
     }
 
     @Test
-    public void shouldAllowFullCrudForAUser() throws Exception {
+    public void shouldAllowFullCrudForASong() throws Exception {
 
-        // Test creating a User
-        User userNotYetInDb = new User(
-                "new_user",
-                "Not",
+        // Test creating a Song
+        Song SongNotYetInDb = new Song(
+                "new_song not",
                 "Yet Created"
         );
 
         given()
                 .contentType(JSON)
-                .and().body(userNotYetInDb)
+                .and().body(SongNotYetInDb)
                 .when()
-                .post("http://localhost:8080/users")
+                .post("http://localhost:8080/songs")
                 .then()
                 .statusCode(is(200))
-                .and().body(containsString("new_user"));
+                .and().body(containsString("new_song"));
 
-        // Test get all Users
+        // Test get all Songs
         when()
-                .get("http://localhost:8080/users/")
+                .get("http://localhost:8080/songs/")
                 .then()
                 .statusCode(is(200))
-                .and().body(containsString("someone"))
-                .and().body(containsString("Else"))
+                .and().body(containsString("Ima"))
+                .and().body(containsString("Song"))
                 .and().body(containsString("Yet Created"));
 
-        // Test finding one user by ID
+        // Test finding one Song by ID
         when()
-                .get("http://localhost:8080/users/" + secondUser.getId())
+                .get("http://localhost:8080/songs/" + secondSong.getId())
                 .then()
                 .statusCode(is(200))
-                .and().body(containsString("Someone"))
-                .and().body(containsString("Else"));
+                .and().body(containsString("Imma'nother"))
+                .and().body(containsString("Song"));
 
-        // Test updating a user
-        secondUser.setFirstName("changed_name");
+        // Test updating a Song
+        secondSong.setTitle("changed_title");
 
         given()
                 .contentType(JSON)
-                .and().body(secondUser)
+                .and().body(secondSong)
                 .when()
-                .patch("http://localhost:8080/users/" + secondUser.getId())
+                .patch("http://localhost:8080/songs/" + secondSong.getId())
                 .then()
                 .statusCode(is(200))
-                .and().body(containsString("changed_name"));
+                .and().body(containsString("changed_title"));
 
-        // Test deleting a user
+        // Test deleting a Song
         when()
-                .delete("http://localhost:8080/users/" + secondUser.getId())
+                .delete("http://localhost:8080/songs/" + secondSong.getId())
                 .then()
                 .statusCode(is(200));
     }

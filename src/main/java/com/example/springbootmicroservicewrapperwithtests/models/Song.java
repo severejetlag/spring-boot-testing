@@ -14,13 +14,13 @@ public class Song {
     private Long id;
 
     @Column(name = "TITLE")
-    private String userName;
+    private String title;
 
     @Column(name = "ARTIST")
-    private String firstName;
+    private String artist;
 
     public Song(String title, String artist) {
-        this.userName = title;
-        this.firstName = artist;
+        this.title = title;
+        this.artist = artist;
     }
 }
